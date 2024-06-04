@@ -1,0 +1,21 @@
+<mxfile host="app.diagrams.net" modified="2024-06-04T18:05:09.982Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" version="24.4.13" etag="YJOg0-6WtFgX67i3dtPs" type="github">
+  <diagram name="페이지-1" id="1g7UtiL25xNq1P0q8q4Y">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="Actor" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="9" width="55" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="Usecase" style="rounded=1;absoluteArcSize=1;arcSize=14;whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry y="84" width="72" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="" style="curved=1;startArrow=none;endArrow=block;exitX=0.49438920454545454;exitY=1;entryX=0.5026584201388888;entryY=0;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
