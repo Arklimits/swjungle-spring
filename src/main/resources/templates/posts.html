@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Simple Board</title>
+</head>
+<body>
+<h1>Post List</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Content</th>
+        <th>Date</th>
+    </tr>
+    <tr th:each="post : ${posts}">
+        <td th:text="${post.id}"></td>
+        <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
+        <td th:text="${post.author}"></td>
+        <td th:text="${post.content}"></td>
+        <td th:text="${post.date}"></td>
+    </tr>
+</table>
+<button onclick="location.href='posts/new'">글쓰기</button>
+</body>
+</html>
