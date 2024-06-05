@@ -29,6 +29,7 @@ public class PostService {
     }
 
     public void updatePost(Post post) {
+        post.setDate();
         postRepository.save(post);
     }
 

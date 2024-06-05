@@ -17,11 +17,11 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/posts")
+    @GetMapping("/")
     public String getAllPosts(Model model) {
         List<Post> posts = postService.getAllPosts();
         model.addAttribute("posts", posts);
-        return "posts";
+        return "index";
     }
 
     @GetMapping("/posts/new")
@@ -33,7 +33,7 @@ public class PostController {
     @PostMapping("/posts")
     public String addPost(@ModelAttribute Post post) {
         postService.addPost(post);
-        return "redirect:/posts";
+        return "redirect:/";
     }
 
     @GetMapping("/posts/{id}")
@@ -59,6 +59,6 @@ public class PostController {
     @GetMapping("/posts/del/{id}")
     public String removePost(@PathVariable int id) {
         postService.deletePostById(id);
-        return "redirect:/posts";
+        return "redirect:/";
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <title>Edit Post</title>
 </head>
@@ -19,12 +19,8 @@
         <label for="author">Author:</label>
         <input type="text" id="author" th:field="*{author}" />
     </div>
-    <div>
-        <label for="date">Date:</label>
-        <input type="text" id="date" th:field="*{date}" readonly />
-    </div>
     <button type="submit">Update</button>
 </form>
-<a href="/posts">Back to Posts</a>
+<a href="/">Back to Posts</a>
 </body>
 </html>
