@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -24,39 +25,40 @@ public class PostController {
         return "index";
     }
 
-    @GetMapping("/posts/new")
+    @GetMapping("/post/new/")
     public String getNewPostForm(Model model) {
         model.addAttribute("post", new Post());
         return "postForm";
     }
 
-    @PostMapping("/posts")
-    public String addPost(@ModelAttribute Post post) {
+    @PostMapping("/post")
+    public String addPost(@ModelAttribute Post post, RedirectAttributes redirectAttributes) {
         postService.addPost(post);
-        return "redirect:/";
+        redirectAttributes.addAttribute("id", post.getId());
+        return "redirect:/post/{id}";
     }
 
-    @GetMapping("/posts/{id}")
+    @GetMapping("/post/{id}")
     public String getPostById(@PathVariable int id, Model model) {
         Post post = postService.getPostById(id);
         model.addAttribute("post", post);
         return "postDetail";
     }
 
-    @GetMapping("/posts/edit/{id}")
+    @GetMapping("/post/edit/{id}")
     public String getEditPostForm(@PathVariable int id, Model model) {
         Post post = postService.getPostById(id);
         model.addAttribute("post", post);
         return "editPost";
     }
 
-    @PostMapping("/posts/update")
+    @PostMapping("/post/edit/{id}")
     public String updatePost(@ModelAttribute Post post) {
         postService.updatePost(post);
-        return "redirect:/posts/" + post.getId();
+        return "redirect:/post/" + post.getId();
     }
 
-    @GetMapping("/posts/del/{id}")
+    @GetMapping("/post/del/{id}")
     public String removePost(@PathVariable int id) {
         postService.deletePostById(id);
         return "redirect:/";

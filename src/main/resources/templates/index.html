@@ -14,12 +14,12 @@
     </tr>
     <tr th:each="post : ${posts}">
         <td th:text="${post.id}"></td>
-        <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
+        <td><a th:href="@{/post/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
         <td th:text="${post.author}"></td>
         <td th:text="${post.date}"></td>
     </tr>
 </table>
-<button onclick="location.href='signin'">로그인</button>
-<button onclick="location.href='posts/new'">글쓰기</button>
+<button onclick="location.href='login'">로그인</button>
+<button onclick="location.href='post/new/'">글쓰기</button>
 </body>
 </html>
