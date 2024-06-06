@@ -26,8 +26,6 @@ public class JwtUtil {
         String secret = "${jwt.secret}";
 
         try {
-            SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
-
             return Keys.secretKeyFor(SignatureAlgorithm.HS256);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Failed to create secret key", e);
