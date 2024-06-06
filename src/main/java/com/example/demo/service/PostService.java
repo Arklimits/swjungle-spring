@@ -4,7 +4,6 @@ import com.example.demo.controller.dto.PostRequestDTO;
 import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.model.Post;
 import com.example.demo.repository.PostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -25,7 +24,7 @@ public class PostService {
 
     public PostResponseDTO addPost(PostRequestDTO postRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = new Post(postRequestDTO.getTitle(), postRequestDTO.getContent(), UserService.getCurrentUsername(), date);
+        Post post = new Post(postRequestDTO.getTitle(), postRequestDTO.getContent(), CustomUserService.getCurrentUsername(), date);
 
         return new PostResponseDTO(postRepository.save(post));
     }

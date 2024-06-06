@@ -3,16 +3,13 @@ package com.example.demo.controller;
 import com.example.demo.controller.dto.PostListDTO;
 import com.example.demo.controller.dto.PostRequestDTO;
 import com.example.demo.controller.dto.PostResponseDTO;
-import com.example.demo.model.Post;
 import com.example.demo.service.PostService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class PostController {
@@ -43,7 +40,7 @@ public class PostController {
     @GetMapping("/post/edit/{id}")
     public ResponseEntity<PostResponseDTO> getEditPostForm(@PathVariable long id) {
         PostResponseDTO postResponseDTO = postService.getPostById(id);
-        if (UserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
+        if (CustomUserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
 
             return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
         }
@@ -61,8 +58,8 @@ public class PostController {
     @DeleteMapping("/post/del/{id}")
     public ResponseEntity<?> removePost(@PathVariable("id") long id) {
         PostResponseDTO postResponseDTO = postService.getPostById(id);
-        System.out.println(UserService.getCurrentUserRole());
-        if (UserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
+        System.out.println(CustomUserService.getCurrentUserRole());
+        if (CustomUserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
             postService.deletePostById(id);
 
             return new ResponseEntity<Long>(id, HttpStatus.OK);

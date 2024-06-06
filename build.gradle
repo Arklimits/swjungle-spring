@@ -33,6 +33,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.springframework.security:spring-security-config'
 
+//    Model Mapper
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.2'
+
 }
 
 tasks.named('test') {
