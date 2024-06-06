@@ -1,71 +1,66 @@
 package com.example.demo.controller;
 
+import com.example.demo.controller.dto.PostDTO;
 import com.example.demo.model.Post;
 import com.example.demo.service.PostService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class PostController {
     @Autowired
     private PostService postService;
 
     @GetMapping("/")
-    public String getAllPosts(Model model) {
+    public ResponseEntity<List<Post>> getAllPosts(Model model) {
         List<Post> posts = postService.getAllPosts();
-        model.addAttribute("posts", posts);
-        return "index";
-    }
 
-    @GetMapping("/post/new/")
-    public String getNewPostForm(Model model) {
-        model.addAttribute("post", new Post());
-        return "postForm";
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @PostMapping("/post")
-    public String addPost(@ModelAttribute Post post, RedirectAttributes redirectAttributes) {
-        postService.addPost(post);
-        redirectAttributes.addAttribute("id", post.getId());
-        return "redirect:/post/{id}";
+    public ResponseEntity<Long> addPost(@RequestBody PostDTO postDTO) {
+        long id = postService.addPost(postDTO);
+
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @GetMapping("/post/{id}")
-    public String getPostById(@PathVariable int id, Model model) {
+    public ResponseEntity<Post> getPostById(@PathVariable("id") int id) {
         Post post = postService.getPostById(id);
-        model.addAttribute("post", post);
-        return "postDetail";
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @GetMapping("/post/edit/{id}")
-    public String getEditPostForm(@PathVariable int id, Model model) {
+    public ResponseEntity<Post> getEditPostForm(@PathVariable long id) {
         Post post = postService.getPostById(id);
-        if (post.getAuthor().equals(UserService.getCurrentUserId())){
-            model.addAttribute("post", post);
-            return "editPost";
+        if (UserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
+
+            return new ResponseEntity<>(post, HttpStatus.OK);
         }
-        return "redirect:/post/" + id;
+
+        return new ResponseEntity<>(post, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @PostMapping("/post/edit/{id}")
-    public String updatePost(@ModelAttribute Post post) {
-        postService.updatePost(post);
-        return "redirect:/post/" + post.getId();
+    public ResponseEntity<Long> updatePost(@PathVariable("id") long id, @RequestBody PostDTO postDTO) {
+        postService.updatePost(id, postDTO);
+
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @GetMapping("/post/del/{id}")
     public String removePost(@PathVariable int id) {
         Post post = postService.getPostById(id);
-        if (post.getAuthor().equals(UserService.getCurrentUserId())){
+        System.out.println(UserService.getCurrentUserRole());
+        if (UserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
             postService.deletePostById(id);
             return "redirect:/";
         }

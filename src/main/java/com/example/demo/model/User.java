@@ -1,7 +1,9 @@
 package com.example.demo.model;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+
 
 @Entity
 public class User {
