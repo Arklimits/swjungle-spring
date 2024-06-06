@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
-
 
 @Entity
 @Getter
@@ -21,18 +19,20 @@ public class Post {
     private String title;
     private String content;
     private String author;
-    private String date;
+    private String createdAt;
+    private String modifiedAt;
 
     public Post(String title, String content, String author, String date) {
         this.title = title;
         this.content = content;
         this.author = author;
-        this.date = date;
+        this.createdAt = date;
+        this.modifiedAt = date;
     }
 
     public void editPost(String title, String content, String date){
         this.title = title;
         this.content = content;
-        this.date = date;
+        this.modifiedAt = date;
     }
 }

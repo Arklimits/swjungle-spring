@@ -4,8 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
-@Builder
-public class PostDTO {
+public class PostRequestDTO {
     @NotNull
     private String title;
     @NotNull

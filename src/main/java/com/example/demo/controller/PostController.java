@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.controller.dto.PostDTO;
+import com.example.demo.controller.dto.PostListDTO;
+import com.example.demo.controller.dto.PostRequestDTO;
+import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.model.Post;
 import com.example.demo.service.PostService;
 import com.example.demo.service.UserService;
@@ -18,53 +20,54 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Post>> getAllPosts(Model model) {
-        List<Post> posts = postService.getAllPosts();
-
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+    public ResponseEntity<PostListDTO> getAllPosts(Model model) {
+        PostListDTO postListDTO = new PostListDTO(postService.getAllPosts());
+        return new ResponseEntity<>(postListDTO, HttpStatus.OK);
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Long> addPost(@RequestBody PostDTO postDTO) {
-        long id = postService.addPost(postDTO);
+    public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostRequestDTO postRequestDTO) {
+        System.out.println(postRequestDTO.getTitle() + postRequestDTO.getContent());
+        PostResponseDTO postResponseDTO = postService.addPost(postRequestDTO);
 
-        return new ResponseEntity<>(id, HttpStatus.OK);
+        return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/post/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable("id") int id) {
-        Post post = postService.getPostById(id);
+    public ResponseEntity<PostResponseDTO> getPostById(@PathVariable("id") int id) {
+        PostResponseDTO postResponseDTO = postService.getPostById(id);
 
-        return new ResponseEntity<>(post, HttpStatus.OK);
+        return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/post/edit/{id}")
-    public ResponseEntity<Post> getEditPostForm(@PathVariable long id) {
-        Post post = postService.getPostById(id);
+    public ResponseEntity<PostResponseDTO> getEditPostForm(@PathVariable long id) {
+        PostResponseDTO postResponseDTO = postService.getPostById(id);
         if (UserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
 
-            return new ResponseEntity<>(post, HttpStatus.OK);
+            return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(post, HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(postResponseDTO, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    @PostMapping("/post/edit/{id}")
-    public ResponseEntity<Long> updatePost(@PathVariable("id") long id, @RequestBody PostDTO postDTO) {
-        postService.updatePost(id, postDTO);
+    @PutMapping("/post/edit/{id}")
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable("id") long id, @RequestBody PostRequestDTO postRequestDTO) {
+        PostResponseDTO postResponseDTO = postService.updatePost(id, postRequestDTO);
 
-        return new ResponseEntity<>(id, HttpStatus.OK);
+        return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/post/del/{id}")
-    public String removePost(@PathVariable int id) {
-        Post post = postService.getPostById(id);
+    @DeleteMapping("/post/del/{id}")
+    public ResponseEntity<?> removePost(@PathVariable("id") long id) {
+        PostResponseDTO postResponseDTO = postService.getPostById(id);
         System.out.println(UserService.getCurrentUserRole());
         if (UserService.getCurrentUserRole().equals("[ROLE_ADMIN]")) {
             postService.deletePostById(id);
-            return "redirect:/";
+
+            return new ResponseEntity<Long>(id, HttpStatus.OK);
         }
 
-        return "redirect:/post/" + id;
+        return new ResponseEntity<PostResponseDTO>(postResponseDTO, HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

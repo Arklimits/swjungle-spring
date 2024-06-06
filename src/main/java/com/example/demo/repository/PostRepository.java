@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p FROM Post p ORDER BY p.date DESC")
+    @Query("SELECT post FROM Post post ORDER BY post.modifiedAt DESC")
     List<Post> findAllPostOrderByDateDesc();
 }

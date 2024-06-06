@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.User;
+import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -13,29 +13,22 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
-    @GetMapping("/register")
-    public String register(Model model) {
-        model.addAttribute("user", new User());
-
-        return "register";
-    }
-
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute User user, BindingResult bindingResult) {
-        if (userService.findByUsername(user.getUsername()).isPresent()) {
-            return bindingResult.getFieldError().getDefaultMessage();
+    public String registerUser(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult bindingResult) {
+        if (userService.findByUsername(userRequestDTO.getUsername()).isPresent()) {
+            return "exist username";
         }
 
         if (bindingResult.hasErrors()) {
             return bindingResult.getFieldError().getDefaultMessage();
         }
 
-        userService.saveUser(user);
-        return "redirect:/login";
+        userService.saveUser(userRequestDTO);
+        return "register complete";
     }
+
+//    @PostMapping("/login")
+//    public UserDetails login(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+//        return userService.loadUserByUsername(userRequestDTO.getUsername());
+//    }
 }

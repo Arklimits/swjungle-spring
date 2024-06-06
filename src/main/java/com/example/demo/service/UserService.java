@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,15 @@ import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
+    @Autowired
+    private UserRepository userRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserService(@Lazy BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Bean
     public static String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -32,19 +43,12 @@ public class UserService implements UserDetailsService {
         if (authentication != null && authentication.isAuthenticated()) {
             return authentication.getAuthorities().toString();
         } else {
-            return null;
+            return "null";
         }
     }
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("USER");
+    public void saveUser(UserRequestDTO userRequestDTO) {
+        User user = new User(userRequestDTO.getUsername(), passwordEncoder.encode(userRequestDTO.getPassword()), "USER");
         userRepository.save(user);
     }
 

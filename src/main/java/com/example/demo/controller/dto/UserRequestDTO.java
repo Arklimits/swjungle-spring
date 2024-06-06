@@ -1,12 +1,12 @@
 package com.example.demo.controller.dto;
 
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
 
 @Getter
-@Builder
-public class UserDTO {
+public class UserRequestDTO {
     @NotNull
     @Size(min = 4, max = 10, message = "유저 이름은 4~10 글자여야 합니다.")
     @Pattern(regexp = "^[a-z0-9]+$", message = "유저 이름은 알파벳 소문자, 숫자로 구성되어야 합니다.")

@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.dto.PostDTO;
+import com.example.demo.controller.dto.PostRequestDTO;
+import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.model.Post;
 import com.example.demo.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,38 +9,41 @@ import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PostService {
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+
+    private PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 
     public List<Post> getAllPosts() {
         return postRepository.findAllPostOrderByDateDesc();
     }
 
-    public long addPost(PostDTO postDTO) {
+    public PostResponseDTO addPost(PostRequestDTO postRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = new Post(postDTO.getTitle(), postDTO.getContent(), UserService.getCurrentUsername(), date);
-        Post save = postRepository.save(post);
+        Post post = new Post(postRequestDTO.getTitle(), postRequestDTO.getContent(), UserService.getCurrentUsername(), date);
 
-        return save.getId();
+        return new PostResponseDTO(postRepository.save(post));
     }
 
-    public Post getPostById(long id) {
-        return postRepository.findById(id).orElse(null);
+    public PostResponseDTO getPostById(long id) {
+        return new PostResponseDTO(Objects.requireNonNull(postRepository.findById(id).orElse(null)));
     }
 
-    public long updatePost(long id, PostDTO postDTO) {
+    public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postRepository.findById(id).orElse(null);
-        post.editPost(postDTO.getTitle(), postDTO.getContent(), date);
-        Post save = postRepository.save(post);
+        Objects.requireNonNull(post).editPost(postRequestDTO.getTitle(), postRequestDTO.getContent(), date);
 
-        return save.getId();
+        return new PostResponseDTO(postRepository.save(post));
     }
 
     public void deletePostById(long id) {
+
         postRepository.deleteById(id);
     }
 }
