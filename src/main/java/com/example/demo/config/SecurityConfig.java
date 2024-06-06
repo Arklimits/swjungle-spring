@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
-            "/"
+            "/", "/post/^[0-9]+$", "/login", "/register"
     };
 
     @Bean
