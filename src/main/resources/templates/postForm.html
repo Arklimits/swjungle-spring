@@ -5,9 +5,15 @@
 </head>
 <body>
 <h1>New Post</h1>
-<form action="#" th:action="@{/posts}" th:object="${post}" method="post">
-    <p>Title: <input required type="text" th:field="*{title}"/></p>
-    <p>Content: <textarea required th:field="*{content}"></textarea></p>
+<form action="#" th:action="@{/post}" th:object="${post}" method="post">
+    <div>
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" />
+    </div>
+    <div>
+        <label for="content">Content:</label>
+        <textarea id="content" th:field="*{content}"></textarea>
+    </div>
     <p><input type="submit" value="Submit"/></p>
 </form>
 </body>

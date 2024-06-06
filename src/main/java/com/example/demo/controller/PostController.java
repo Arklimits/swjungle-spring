@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Post;
 import com.example.demo.service.PostService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,8 +49,11 @@ public class PostController {
     @GetMapping("/post/edit/{id}")
     public String getEditPostForm(@PathVariable int id, Model model) {
         Post post = postService.getPostById(id);
-        model.addAttribute("post", post);
-        return "editPost";
+        if (post.getAuthor().equals(UserService.getCurrentUserId())){
+            model.addAttribute("post", post);
+            return "editPost";
+        }
+        return "redirect:/post/" + id;
     }
 
     @PostMapping("/post/edit/{id}")
@@ -60,7 +64,12 @@ public class PostController {
 
     @GetMapping("/post/del/{id}")
     public String removePost(@PathVariable int id) {
-        postService.deletePostById(id);
-        return "redirect:/";
+        Post post = postService.getPostById(id);
+        if (post.getAuthor().equals(UserService.getCurrentUserId())){
+            postService.deletePostById(id);
+            return "redirect:/";
+        }
+
+        return "redirect:/post/" + id;
     }
 }

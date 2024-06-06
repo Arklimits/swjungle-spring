@@ -5,13 +5,10 @@ import com.example.demo.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PostService {
-    private List<Post> posts = new ArrayList<>();
-
     @Autowired
     private PostRepository postRepository;
 
@@ -21,6 +18,7 @@ public class PostService {
 
     public void addPost(Post post) {
         post.setDate();
+        post.setAuthor(UserService.getCurrentUserId());
         postRepository.save(post);
     }
 
