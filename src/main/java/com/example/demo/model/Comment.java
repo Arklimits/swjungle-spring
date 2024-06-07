@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -20,6 +21,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @Setter
     private Post post;
 
     public void editComment(String content, String author, String modifiedDate) {
