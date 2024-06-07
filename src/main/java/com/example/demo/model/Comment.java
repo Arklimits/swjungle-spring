@@ -1,15 +1,12 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,12 +18,17 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    @Setter
     private Post post;
 
-    public void editComment(String content, String author, String modifiedAt) {
+    public Comment(String content, String author, String date) {
         this.content = content;
         this.author = author;
+        this.createdAt = date;
+        this.modifiedAt = date;
+    }
+
+    public void editComment(String content, String modifiedAt) {
+        this.content = content;
         this.modifiedAt = modifiedAt;
     }
 }
