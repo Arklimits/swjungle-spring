@@ -1,12 +1,15 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.dto.CommentRequestDTO;
 import com.example.demo.model.Comment;
 import com.example.demo.model.Post;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostRepository;
+import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -14,17 +17,20 @@ import java.util.List;
 public class CommentService {
     private CommentRepository commentRepository;
     private PostRepository postRepository;
+    private UserRepository userRepository;
 
     /**
      * Comment 저장
      *
-     * @param postId  Post ID
-     * @param comment Comment
+     * @param postId  Comment ID
+     * @param commentRequestDTO Comment
      * @return 저장된 Comment
      */
-    public Comment saveComment(Long postId, Comment comment) {
+    public Comment saveComment(Long postId, CommentRequestDTO commentRequestDTO) {
+        String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
-        comment.setPost(post);
+        Comment comment = new Comment(commentRequestDTO.getContent(), UserService.getCurrentUsername(), date, post);
+
         return commentRepository.save(comment);
     }
 
@@ -41,7 +47,7 @@ public class CommentService {
     /**
      * Comment 삭제
      *
-     * @param id
+     * @param id Comment ID
      */
     public void deleteComment(Long id) {
         commentRepository.deleteById(id);
