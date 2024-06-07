@@ -20,11 +20,12 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public Comment(String content, String author, String date) {
+    public Comment(String content, String author, String date, Post post) {
         this.content = content;
         this.author = author;
         this.createdAt = date;
         this.modifiedAt = date;
+        this.post = post;
     }
 
     public void editComment(String content, String modifiedAt) {
