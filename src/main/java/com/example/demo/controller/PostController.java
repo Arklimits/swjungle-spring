@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-@RestController
+@RestController("/post")
 public class PostController {
     @Autowired
     private PostService postService;
 
-    @GetMapping("/")
+    @GetMapping("/index")
     public ResponseEntity<PostListDTO> getAllPosts(Model model) {
         PostListDTO postListDTO = new PostListDTO(postService.getAllPosts());
         return new ResponseEntity<>(postListDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/post")
+    @PostMapping("/new")
     public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostRequestDTO postRequestDTO) {
         System.out.println(postRequestDTO.getTitle() + postRequestDTO.getContent());
         PostResponseDTO postResponseDTO = postService.addPost(postRequestDTO);
@@ -32,21 +32,21 @@ public class PostController {
         return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/post/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable("id") int id) {
         PostResponseDTO postResponseDTO = postService.getPostById(id);
 
         return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/post/edit/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable("id") long id, @RequestBody PostRequestDTO postRequestDTO) {
         PostResponseDTO postResponseDTO = postService.updatePost(id, postRequestDTO);
 
         return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/post/del/{id}")
+    @DeleteMapping("/del/{id}")
     public ResponseEntity<?> removePost(@PathVariable("id") long id) {
         PostResponseDTO postResponseDTO = postService.getPostById(id);
         if (Objects.requireNonNull(UserService.getCurrentUserRole()).equals("[ROLE_ADMIN]")
