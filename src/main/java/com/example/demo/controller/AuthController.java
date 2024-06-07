@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.component.JwtUtil;
+import com.example.demo.controller.dto.AuthResponse;
+import com.example.demo.controller.dto.UserInfoDTO;
 import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
@@ -13,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthService authService;
-
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> getUserProfile(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        String token = this.authService.login(userRequestDTO);
+        UserInfoDTO userInfoDTO = this.authService.login(userRequestDTO);
+        AuthResponse authResponse = jwtUtil.createAccessToken(userInfoDTO);
 
-        return ResponseEntity.status(HttpStatus.OK).body(token);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.component;
 
+import com.example.demo.controller.dto.AuthResponse;
 import com.example.demo.controller.dto.UserInfoDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -16,12 +17,16 @@ public class JwtUtil {
     private final Key key;
     private final long accessTokenExpTime;
 
+    /**
+     * Secret Key 및 Expiration Time 설정
+     * @param secretkey Secret Key
+     * @param accessTokenExpTime Expiration Time
+     */
     public JwtUtil(@Value("${jwt.secret}") String secretkey, @Value("${jwt.expiration_time}") long accessTokenExpTime) {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
 
-        if (keyBytes.length < 32) {
+        if (keyBytes.length < 32)
             throw new IllegalArgumentException("Secret key must be at least 32 bytes");
-        }
 
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpTime = accessTokenExpTime;
@@ -33,7 +38,7 @@ public class JwtUtil {
      * @param userInfoDTO User Information
      * @return Access Token String
      */
-    public String createAccessToken(UserInfoDTO userInfoDTO) {
+    public AuthResponse createAccessToken(UserInfoDTO userInfoDTO) {
 
         return createToken(userInfoDTO, accessTokenExpTime);
     }
@@ -45,15 +50,20 @@ public class JwtUtil {
      * @param expireTime  Expire Time
      * @return JWT String
      */
-    private String createToken(UserInfoDTO userInfoDTO, long expireTime) {
+    private AuthResponse createToken(UserInfoDTO userInfoDTO, long expireTime) {
         Claims claims = Jwts.claims().setSubject(userInfoDTO.getUsername());
 
-        return Jwts.builder()
+        Date issuedAt = new Date(System.currentTimeMillis());
+        Date expiresAt = new Date(System.currentTimeMillis() + expireTime);
+
+        String token = Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiresAt)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        return new AuthResponse(token, userInfoDTO.getUsername(), issuedAt, expiresAt);
     }
 
     /**
@@ -95,7 +105,7 @@ public class JwtUtil {
     /**
      * JWT 에서 Username 추출
      *
-     * @param token
+     * @param token JWT Token
      * @return Username
      */
     public String getUsername(String token) {

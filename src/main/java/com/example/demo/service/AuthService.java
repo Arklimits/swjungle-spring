@@ -6,12 +6,12 @@ import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class AuthService {
     private final ModelMapper modelMapper;
 
     @Transactional
-    public String login(UserRequestDTO userRequestDTO) {
+    public UserInfoDTO login(UserRequestDTO userRequestDTO) {
         String username = userRequestDTO.getUsername();
         String password = userRequestDTO.getPassword();
         Optional<User> user = userRepository.findByUsername(username);
@@ -38,7 +38,6 @@ public class AuthService {
             throw new BadCredentialsException("Password does not match");
         }
 
-        UserInfoDTO userInfoDTO = modelMapper.map(user, UserInfoDTO.class);
-        return jwtUtil.createAccessToken(userInfoDTO);
+        return modelMapper.map(user.get(), UserInfoDTO.class);
     }
 }

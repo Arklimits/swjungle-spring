@@ -1,39 +1,37 @@
 package com.example.demo.config;
 
+import com.example.demo.component.CustomAccessDeniedHandler;
+import com.example.demo.component.CustomAuthenticationEntryPoint;
 import com.example.demo.component.JwtAuthFilter;
 import com.example.demo.component.JwtUtil;
-import com.example.demo.service.CustomUserService;
+import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-    private final CustomUserService customUserService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
-    private final AccessDeniedHandler accessDeniedHandler;
-    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
-            "/", "/post/^[0-9]+$", "/login", "/register"
+            "/", "/login", "/register"
     };
+    private static final RegexRequestMatcher regexRequestMatcher
+            = new RegexRequestMatcher("^/post/[0-9]+$", "GET");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,12 +46,14 @@ public class SecurityConfig {
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         // JwtAuthFilter 를 UserNamePasswordAuthenticationFilter 앞에 추가
-        http.addFilterBefore(new JwtAuthFilter(customUserService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-        http.exceptionHandling((exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint).accessDeniedHandler(accessDeniedHandler)));
+        http.addFilterBefore(new JwtAuthFilter(userService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling((exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint(customAuthenticationEntryPoint).accessDeniedHandler(customAccessDeniedHandler)));
 
         // 권한 규칙 작성
-        http.authorizeHttpRequests(authorize -> authorize.requestMatchers(AUTH_WHITELIST).permitAll()
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(AUTH_WHITELIST).permitAll()
+                .requestMatchers(regexRequestMatcher).permitAll()
                 .anyRequest().authenticated());
 
         return http.build();

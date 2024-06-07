@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.springframework.security:spring-security-config'
 
 //    Model Mapper
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.2'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
 
 }
 

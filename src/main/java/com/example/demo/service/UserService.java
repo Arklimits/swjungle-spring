@@ -1,11 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.dto.UserInfoDTO;
 import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,18 +19,18 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CustomUserService implements UserDetailsService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
     public static String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails userDetails) {
-            return userDetails.getUsername();
-        } else {
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof UserDetails userDetails)) {
             return null;
         }
+
+        return userDetails.getUsername();
     }
 
     @Bean
@@ -41,7 +39,7 @@ public class CustomUserService implements UserDetailsService {
         if (authentication != null && authentication.isAuthenticated()) {
             return authentication.getAuthorities().toString();
         } else {
-            return "null";
+            return null;
         }
     }
 
@@ -61,6 +59,10 @@ public class CustomUserService implements UserDetailsService {
         if (user.isEmpty())
             throw new UsernameNotFoundException("User not found");
 
-        return org.springframework.security.core.userdetails.User.withUsername(user.get().getUsername()).password(user.get().getPassword()).roles(user.get().getRole()).build();
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.get().getUsername())
+                .password(user.get().getPassword())
+                .roles(user.get().getRole())
+                .build();
     }
 }
