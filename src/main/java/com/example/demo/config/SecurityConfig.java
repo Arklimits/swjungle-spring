@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private static final String[] AUTH_WHITELIST = {
-            "/", "/login", "/register"
+            "/post/index", "/login", "/register"
     };
     private static final RegexRequestMatcher regexRequestMatcher
             = new RegexRequestMatcher("^/post/[0-9]+$", "GET");
