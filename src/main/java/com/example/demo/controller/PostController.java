@@ -6,7 +6,6 @@ import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.service.PostService;
 import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;

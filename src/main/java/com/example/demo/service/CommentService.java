@@ -1,11 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.controller.dto.CommentRequestDTO;
+import com.example.demo.controller.dto.CommentResponseDTO;
 import com.example.demo.model.Comment;
-import com.example.demo.model.Post;
 import com.example.demo.repository.CommentRepository;
-import com.example.demo.repository.PostRepository;
-import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,22 +14,19 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentService {
     private CommentRepository commentRepository;
-    private PostRepository postRepository;
-    private UserRepository userRepository;
 
     /**
      * Comment 저장
      *
-     * @param postId  Comment ID
+     * @param postId            Comment ID
      * @param commentRequestDTO Comment
      * @return 저장된 Comment
      */
-    public Comment saveComment(Long postId, CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO saveComment(Long postId, CommentRequestDTO commentRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
-        Comment comment = new Comment(commentRequestDTO.getContent(), UserService.getCurrentUsername(), date, post);
+        Comment comment = new Comment(commentRequestDTO.getContent(), UserService.getCurrentUsername(), date, postId);
 
-        return commentRepository.save(comment);
+        return new CommentResponseDTO(commentRepository.save(comment));
     }
 
     /**

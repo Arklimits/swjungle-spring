@@ -10,22 +10,19 @@ import lombok.NoArgsConstructor;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     private String content;
     private String author;
     private String createdAt;
     private String modifiedAt;
+    private Long postId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    public Comment(String content, String author, String date, Post post) {
+    public Comment(String content, String author, String date, Long postId) {
         this.content = content;
         this.author = author;
         this.createdAt = date;
         this.modifiedAt = date;
-        this.post = post;
+        this.postId = postId;
     }
 
     public void editComment(String content, String modifiedAt) {

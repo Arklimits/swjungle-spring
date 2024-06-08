@@ -1,9 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.controller.dto.CommentRequestDTO;
+import com.example.demo.controller.dto.CommentResponseDTO;
 import com.example.demo.model.Comment;
 import com.example.demo.service.CommentService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +16,13 @@ import java.util.List;
 @RequestMapping("/post/{postId}/comment")
 @AllArgsConstructor
 public class CommentController {
-    private CommentService commentService;
+    private final CommentService commentService;
+    private final ModelMapper modelMapper;
 
-    @PostMapping
-    public Comment createComment(@PathVariable("postId") Long postId, @RequestBody CommentRequestDTO commentRequestDTO) {
+    @PostMapping("/new")
+    public ResponseEntity<CommentResponseDTO> createComment(@PathVariable("postId") Long postId, @RequestBody CommentRequestDTO commentRequestDTO) {
 
-        return commentService.saveComment(postId, commentRequestDTO);
+        return new ResponseEntity<>(commentService.saveComment(postId, commentRequestDTO), HttpStatus.OK);
     }
 
     @GetMapping
