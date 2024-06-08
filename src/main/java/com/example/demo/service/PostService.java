@@ -43,7 +43,8 @@ public class PostService {
      * @return PostResponseDTO
      */
     public PostResponseDTO getPostById(long id) {
-        return new PostResponseDTO(Objects.requireNonNull(postRepository.findById(id).orElse(null)));
+
+        return new PostResponseDTO(postRepository.findById(id).orElseThrow(()-> new RuntimeException("Post not found")));
     }
 
     /** Post 업데이트
