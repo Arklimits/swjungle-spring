@@ -13,9 +13,8 @@ import java.net.URISyntaxException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
-    protected ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e) throws URISyntaxException {
+    protected ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e) {
         final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.BAD_REQUEST, e.getMessage())
-                .type(new URI("POST"))
                 .typeMessageCode("Error Message")
                 .titleMessageCode("Bad Request")
                 .detailMessageCode("NullPointerException")
@@ -25,7 +24,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) throws URISyntaxException {
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(AccessDeniedException e) {
         final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.BAD_REQUEST, e.getMessage())
                 .typeMessageCode("Error Message")
                 .titleMessageCode("Access Denied")
