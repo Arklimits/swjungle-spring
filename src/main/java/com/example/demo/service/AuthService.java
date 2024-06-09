@@ -7,7 +7,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,14 +26,10 @@ public class AuthService {
     public UserInfoDTO login(UserRequestDTO userRequestDTO) {
         String username = userRequestDTO.getUsername();
         String password = userRequestDTO.getPassword();
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Password does not match");
+            throw new AccessDeniedException("Password does not match");
         }
 
         return modelMapper.map(user, UserInfoDTO.class);
