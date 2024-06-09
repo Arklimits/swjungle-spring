@@ -3,21 +3,24 @@ package com.example.demo.service;
 import com.example.demo.controller.dto.PostRequestDTO;
 import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.model.Post;
+import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
 
-    /** 전체 Post 로드
+    /**
+     * 전체 Post 로드
      *
      * @return 수정된 날짜 기준으로 내림차순 정렬된 Posts 리스트
      */
@@ -26,7 +29,8 @@ public class PostService {
         return postRepository.findAllPostOrderByDateDesc();
     }
 
-    /** Post 게시
+    /**
+     * Post 게시
      *
      * @param postRequestDTO Post Request DTO
      * @return PostResponseDTO
@@ -38,37 +42,62 @@ public class PostService {
         return new PostResponseDTO(postRepository.save(post));
     }
 
-    /** Post 찾기
+    /**
+     * Post 찾기
      *
      * @param id Post ID
      * @return PostResponseDTO
      */
     public PostResponseDTO getPostById(long id) {
 
-        return new PostResponseDTO(postRepository.findById(id).orElseThrow(()-> new NullPointerException("Post not found")));
+        return new PostResponseDTO(postRepository.findById(id).orElseThrow(() -> new NullPointerException("Post not found")));
     }
 
-    /** Post 업데이트
+    /**
+     * Post 업데이트
      *
-     * @param id Post ID
+     * @param id             Post ID
      * @param postRequestDTO Original PostResponseDTO
      * @return Updated PostResponseDTO
      */
-    public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) {
+    public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) throws AccessDeniedException {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = postRepository.findById(id).orElseThrow(()-> new NullPointerException("Post not found"));
+        Post post = postRepository.findById(id).orElseThrow(() -> new NullPointerException("Post not found"));
+
+        Done:
+        {
+            if (userService.checkAdministrator())
+                break Done;
+
+            if (!userService.checkAuthor(post.getAuthor()))
+                throw new AccessDeniedException("You are not Author");
+        }
+
         post.editPost(postRequestDTO.getTitle(), postRequestDTO.getContent(), date);
 
         return new PostResponseDTO(postRepository.save(post));
     }
 
-    /** Post 삭제
+    /**
+     * Post 삭제 및 연결된 Comment 삭제
      *
      * @param id Post ID
      */
-    public long deletePostById(long id) {
+    public PostResponseDTO deletePostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new NullPointerException("Post not found"));
 
+        Done:
+        {
+            if (userService.checkAdministrator())
+                break Done;
+
+            if (!userService.checkAuthor(post.getAuthor()))
+                throw new AccessDeniedException("You are not Author");
+        }
+
+        commentRepository.deleteByPostId(id);
         postRepository.deleteById(id);
-        return id;
+
+        return new PostResponseDTO(post);
     }
 }
