@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Component
@@ -53,17 +57,16 @@ public class JwtUtil {
     private AuthResponse createToken(UserInfoDTO userInfoDTO, long expireTime) {
         Claims claims = Jwts.claims().setSubject(userInfoDTO.getUsername());
 
-        Date issuedAt = new Date(System.currentTimeMillis());
-        Date expiresAt = new Date(System.currentTimeMillis() + expireTime);
-
+        LocalDateTime expiresAt = LocalDateTime.now().plusHours(expireTime);
         String token = Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(issuedAt)
-                .setExpiration(expiresAt)
+                .setExpiration(Date.from(expiresAt.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        return new AuthResponse(token, userInfoDTO.getUsername(), issuedAt, expiresAt);
+        String exp = expiresAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+
+        return new AuthResponse(token, userInfoDTO.getUsername(), exp);
     }
 
     /**
@@ -75,6 +78,9 @@ public class JwtUtil {
     public Boolean isTokenValid(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            System.out.println(getUsername(token));
+            System.out.println(getIssuedAt(token));
+            System.out.println(getExpiresAt(token));
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             System.out.println("Invalid JWT");
@@ -83,7 +89,7 @@ public class JwtUtil {
         } catch (UnsupportedJwtException e) {
             System.out.println("Unsupported JWT");
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty");
+            System.out.println("Illegal JWT");
         }
         return false;
     }
@@ -110,5 +116,13 @@ public class JwtUtil {
      */
     public String getUsername(String token) {
         return parseClaims(token).get("username", String.class);
+    }
+
+    public Date getIssuedAt(String token) {
+        return parseClaims(token).getIssuedAt();
+    }
+
+    public Date getExpiresAt(String token) {
+        return parseClaims(token).getExpiration();
     }
 }
