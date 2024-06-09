@@ -1,4 +1,4 @@
-package com.example.demo.controller.dto;
+package com.example.demo.controller.dto.comment;
 
 import com.example.demo.model.Comment;
 

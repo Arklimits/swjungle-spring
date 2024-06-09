@@ -1,7 +1,7 @@
 package com.example.demo.component;
 
-import com.example.demo.controller.dto.AuthResponse;
-import com.example.demo.controller.dto.UserInfoDTO;
+import com.example.demo.controller.dto.auth.AuthResponse;
+import com.example.demo.controller.dto.user.UserInfoDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

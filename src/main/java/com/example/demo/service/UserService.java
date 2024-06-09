@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.dto.UserRequestDTO;
+import com.example.demo.controller.dto.user.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.demo.controller.dto;
+package com.example.demo.controller.dto.post;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

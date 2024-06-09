@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.controller.dto.PostListDTO;
-import com.example.demo.controller.dto.PostRequestDTO;
-import com.example.demo.controller.dto.PostResponseDTO;
+import com.example.demo.controller.dto.post.PostListDTO;
+import com.example.demo.controller.dto.post.PostRequestDTO;
+import com.example.demo.controller.dto.post.PostResponseDTO;
 import com.example.demo.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

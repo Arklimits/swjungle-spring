@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.dto.PostRequestDTO;
-import com.example.demo.controller.dto.PostResponseDTO;
+import com.example.demo.controller.dto.post.PostRequestDTO;
+import com.example.demo.controller.dto.post.PostResponseDTO;
 import com.example.demo.model.Post;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostRepository;

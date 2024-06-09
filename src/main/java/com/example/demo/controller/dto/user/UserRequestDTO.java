@@ -1,4 +1,4 @@
-package com.example.demo.controller.dto;
+package com.example.demo.controller.dto.user;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

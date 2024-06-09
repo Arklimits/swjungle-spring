@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.component.JwtUtil;
-import com.example.demo.controller.dto.AuthResponse;
-import com.example.demo.controller.dto.UserInfoDTO;
-import com.example.demo.controller.dto.UserRequestDTO;
+import com.example.demo.controller.dto.auth.AuthResponse;
+import com.example.demo.controller.dto.user.UserInfoDTO;
+import com.example.demo.controller.dto.user.UserRequestDTO;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
