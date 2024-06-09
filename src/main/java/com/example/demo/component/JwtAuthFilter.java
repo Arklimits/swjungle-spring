@@ -42,8 +42,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String username = jwtUtil.getUsername(token);
             UserDetails userDetails = userService.loadUserByUsername(username); // 유저와 토큰이 일치할 시 userDetails 생성
 
-            if (userDetails == null) break done;
-
             // Username, Password, Role -> Token 생성
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                     = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
