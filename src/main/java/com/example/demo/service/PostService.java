@@ -60,7 +60,7 @@ public class PostService {
      * @param postRequestDTO Original PostResponseDTO
      * @return Updated PostResponseDTO
      */
-    public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) throws AccessDeniedException {
+    public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postRepository.findById(id).orElseThrow(() -> new NullPointerException("Post not found"));
 
