@@ -2,6 +2,8 @@ package com.example.demo.component;
 
 import com.example.demo.controller.dto.auth.AuthResponse;
 import com.example.demo.controller.dto.user.UserInfoDTO;
+import com.example.demo.exception.ExpiredJwtTokenException;
+import com.example.demo.exception.InvalidJwtTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -9,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +24,8 @@ public class JwtUtil {
 
     /**
      * Secret Key 및 Expiration Time 설정
-     * @param secretkey Secret Key
+     *
+     * @param secretkey          Secret Key
      * @param accessTokenExpTime Expiration Time
      */
     public JwtUtil(@Value("${jwt.secret}") String secretkey, @Value("${jwt.expiration_time}") long accessTokenExpTime) {
@@ -80,15 +82,14 @@ public class JwtUtil {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            System.out.println("Invalid JWT");
+            throw new InvalidJwtTokenException("Invalid JWT", e);
         } catch (ExpiredJwtException e) {
-            System.out.println("Expired JWT");
+            throw new ExpiredJwtTokenException("Expired JWT", e);
         } catch (UnsupportedJwtException e) {
-            System.out.println("Unsupported JWT");
+            throw new InvalidJwtTokenException("Unsupported JWT", e);
         } catch (IllegalArgumentException e) {
-            System.out.println("Illegal JWT");
+            throw new InvalidJwtTokenException("Illegal JWT", e);
         }
-        return false;
     }
 
     /**
@@ -113,10 +114,6 @@ public class JwtUtil {
      */
     public String getUsername(String token) {
         return parseClaims(token).get("username", String.class);
-    }
-
-    public Date getIssuedAt(String token) {
-        return parseClaims(token).getIssuedAt();
     }
 
     public Date getExpiresAt(String token) {
