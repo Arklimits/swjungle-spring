@@ -4,7 +4,6 @@ import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +22,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    public static String getCurrentUsername() {
+    public String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
@@ -37,8 +35,7 @@ public class UserService implements UserDetailsService {
         return userDetails.getUsername();
     }
 
-    @Bean
-    public static String getCurrentUserRole() {
+    public String getCurrentUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
@@ -65,9 +62,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-//    public Boolean checkAuthority(String username) {
-//
-//    }
+    public Boolean checkAuthority() {
+        String authority = getCurrentUserRole();
+
+        return authority.equals("[ROLE_ADMIN]");
+    }
+
+    public Boolean checkAuthor(String author) {
+        String username = getCurrentUsername();
+
+        return username.equals(author);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
