@@ -2,19 +2,15 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.dto.CommentRequestDTO;
 import com.example.demo.controller.dto.CommentResponseDTO;
-import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.model.Comment;
 import com.example.demo.service.CommentService;
 import com.example.demo.service.PostService;
-import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/post/{postId}/comment")
@@ -37,6 +33,12 @@ public class CommentController {
         return commentService.getCommentsByPostId(postId);
     }
 
+    @GetMapping("/{commentId}")
+    public ResponseEntity<CommentResponseDTO> getComment(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
+
+        return new ResponseEntity<>(commentService.getCommentsById(commentId), HttpStatus.OK);
+    }
+
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentResponseDTO> updateComment(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId, @RequestBody CommentRequestDTO commentRequestDTO) {
         CommentResponseDTO commentResponseDTO = commentService.updateComment(commentId, commentRequestDTO);
@@ -46,6 +48,7 @@ public class CommentController {
 
     @DeleteMapping("/{commentId}")
     public void deleteComment(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
+
         commentService.deleteComment(commentId);
     }
 }
