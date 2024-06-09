@@ -2,6 +2,7 @@ package com.example.demo.component;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,11 +16,22 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e) throws URISyntaxException {
         final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.BAD_REQUEST, e.getMessage())
                 .type(new URI("POST"))
-                .typeMessageCode("Bad Request")
-                .titleMessageCode("NullPointerException")
-                .detailMessageCode(e.getMessage())
+                .typeMessageCode("Error Message")
+                .titleMessageCode("Bad Request")
+                .detailMessageCode("NullPointerException")
                 .build();
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) throws URISyntaxException {
+        final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.BAD_REQUEST, e.getMessage())
+                .typeMessageCode("Error Message")
+                .titleMessageCode("Access Denied")
+                .detailMessageCode("AccessDeniedException")
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 }
