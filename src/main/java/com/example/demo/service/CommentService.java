@@ -5,8 +5,8 @@ import com.example.demo.controller.dto.CommentResponseDTO;
 import com.example.demo.model.Comment;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostRepository;
-import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -46,6 +46,16 @@ public class CommentService {
     public CommentResponseDTO updateComment(long id, CommentRequestDTO commentRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NullPointerException("Comment not found"));
+
+        Done:
+        {
+            if (userService.checkAdministrator())
+                break Done;
+
+            if (!userService.checkAuthor(comment.getAuthor()))
+                throw new AccessDeniedException("You are not Author");
+        }
+
         comment.editComment(commentRequestDTO.getContent(), date);
 
         return new CommentResponseDTO(commentRepository.save(comment));
@@ -69,6 +79,7 @@ public class CommentService {
      * @return 생성날짜 기준으로 내림차순된 Comments
      */
     public List<Comment> getCommentsByPostId(Long postId) {
+
         return commentRepository.findByPostIdCommentOrderedByDateDesc(postId);
     }
 
@@ -77,7 +88,20 @@ public class CommentService {
      *
      * @param id Comment ID
      */
-    public void deleteComment(Long id) {
+    public CommentResponseDTO deleteComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new NullPointerException("Comment not found"));
+
+        Done:
+        {
+            if (userService.checkAdministrator())
+                break Done;
+
+            if (!userService.checkAuthor(comment.getAuthor()))
+                throw new AccessDeniedException("You are not Author");
+        }
+
         commentRepository.deleteById(id);
+
+        return new CommentResponseDTO(comment);
     }
 }
