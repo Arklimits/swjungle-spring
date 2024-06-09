@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-    public Boolean checkAuthority() {
+    public Boolean checkAdministrator() {
         String authority = getCurrentUserRole();
 
         return authority.equals("[ROLE_ADMIN]");
