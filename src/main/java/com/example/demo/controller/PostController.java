@@ -24,7 +24,6 @@ public class PostController {
 
     @PostMapping("/new")
     public ResponseEntity<PostResponseDTO> addPost(@RequestBody PostRequestDTO postRequestDTO) {
-        System.out.println(postRequestDTO.getTitle() + postRequestDTO.getContent());
         PostResponseDTO postResponseDTO = postService.addPost(postRequestDTO);
 
         return new ResponseEntity<>(postResponseDTO, HttpStatus.OK);
