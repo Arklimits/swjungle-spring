@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class PostService {
      * @return PostResponseDTO
      */
     public PostResponseDTO addPost(PostRequestDTO postRequestDTO) {
-        String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = new Post(postRequestDTO.getTitle(), postRequestDTO.getContent(), userService.getCurrentUsername(), date);
 
         return new PostResponseDTO(postRepository.save(post));
@@ -61,7 +62,7 @@ public class PostService {
      * @return Updated PostResponseDTO
      */
     public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) {
-        String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Post post = postRepository.findById(id).orElseThrow(() -> new NullPointerException("Post not found"));
 
         Done:

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class CommentService {
      * @return 저장된 Comment
      */
     public CommentResponseDTO saveComment(Long postId, CommentRequestDTO commentRequestDTO) {
-        String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         if (postRepository.findById(postId).isEmpty()) {
             throw new NullPointerException("Post does not exist");
         }
@@ -44,7 +45,7 @@ public class CommentService {
      * @return Updated CommentResponseDTO
      */
     public CommentResponseDTO updateComment(long id, CommentRequestDTO commentRequestDTO) {
-        String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NullPointerException("Comment not found"));
 
         Done:
