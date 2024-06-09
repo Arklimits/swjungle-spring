@@ -17,7 +17,7 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/index")
-    public ResponseEntity<PostListDTO> getAllPosts(Model model) {
+    public ResponseEntity<PostListDTO> getAllPosts() {
         PostListDTO postListDTO = new PostListDTO(postService.getAllPosts());
         return new ResponseEntity<>(postListDTO, HttpStatus.OK);
     }
