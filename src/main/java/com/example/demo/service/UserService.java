@@ -4,7 +4,12 @@ import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.service.NullServiceException;
+import org.hibernate.validator.internal.constraintvalidators.bv.NullValidator;
+import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InvalidObjectException;
 import java.util.Optional;
 
 @Service
@@ -27,7 +33,7 @@ public class UserService implements UserDetailsService {
     public static String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof UserDetails userDetails)) {
-            return null;
+            throw new UsernameNotFoundException("User not found");
         }
 
         return userDetails.getUsername();
@@ -39,7 +45,7 @@ public class UserService implements UserDetailsService {
         if (authentication != null && authentication.isAuthenticated()) {
             return authentication.getAuthorities().toString();
         } else {
-            return null;
+            throw new NullPointerException("User Role not found");
         }
     }
 
