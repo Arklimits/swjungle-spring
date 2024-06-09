@@ -11,4 +11,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT comment FROM Comment comment ORDER BY comment.createdAt DESC")
     List<Comment> findByPostIdCommentOrderedByDateDesc(Long postId);
+
+    void deleteByPostId(Long postId);
 }
