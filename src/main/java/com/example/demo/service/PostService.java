@@ -44,7 +44,7 @@ public class PostService {
      */
     public PostResponseDTO getPostById(long id) {
 
-        return new PostResponseDTO(postRepository.findById(id).orElseThrow(()-> new RuntimeException("Post not found")));
+        return new PostResponseDTO(postRepository.findById(id).orElseThrow(()-> new NullPointerException("Post not found")));
     }
 
     /** Post 업데이트
@@ -55,8 +55,8 @@ public class PostService {
      */
     public PostResponseDTO updatePost(long id, PostRequestDTO postRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = postRepository.findById(id).orElse(null);
-        Objects.requireNonNull(post).editPost(postRequestDTO.getTitle(), postRequestDTO.getContent(), date);
+        Post post = postRepository.findById(id).orElseThrow(()-> new NullPointerException("Post not found"));
+        post.editPost(postRequestDTO.getTitle(), postRequestDTO.getContent(), date);
 
         return new PostResponseDTO(postRepository.save(post));
     }
