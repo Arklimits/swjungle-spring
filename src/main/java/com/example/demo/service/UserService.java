@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.component.UsernameFoundException;
 import com.example.demo.controller.dto.user.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -53,13 +54,17 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(UserRequestDTO userRequestDTO) {
+        if (userRepository.findByUsername(userRequestDTO.getUsername()).isPresent()) {
+            throw new UsernameFoundException("Existing Username");
+        }
+
         User user = new User(userRequestDTO.getUsername(), passwordEncoder.encode(userRequestDTO.getPassword()), "USER");
         userRepository.save(user);
     }
 
     public User findByUsername(String username) {
 
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     public Boolean checkAdministrator() {
@@ -76,7 +81,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = findByUsername(username);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
