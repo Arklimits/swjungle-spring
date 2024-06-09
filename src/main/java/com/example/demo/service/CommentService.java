@@ -2,14 +2,10 @@ package com.example.demo.service;
 
 import com.example.demo.controller.dto.CommentRequestDTO;
 import com.example.demo.controller.dto.CommentResponseDTO;
-import com.example.demo.controller.dto.PostRequestDTO;
-import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.model.Comment;
-import com.example.demo.model.Post;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,18 +36,30 @@ public class CommentService {
         return new CommentResponseDTO(commentRepository.save(comment));
     }
 
-    /** Comment 업데이트
+    /**
+     * Comment 업데이트
      *
-     * @param id Comment ID
+     * @param id                Comment ID
      * @param commentRequestDTO Original CommentResponseDTO
      * @return Updated CommentResponseDTO
      */
     public CommentResponseDTO updateComment(long id, CommentRequestDTO commentRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Comment comment = commentRepository.findById(id).orElseThrow(()-> new NullPointerException("Comment not found"));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new NullPointerException("Comment not found"));
         comment.editComment(commentRequestDTO.getContent(), date);
 
         return new CommentResponseDTO(commentRepository.save(comment));
+    }
+
+    /**
+     * Comment ID 찾기
+     *
+     * @param commentId Comment ID
+     * @return CommentResponseDTO
+     */
+    public CommentResponseDTO getCommentsById(Long commentId) {
+
+        return new CommentResponseDTO(commentRepository.findById(commentId).orElseThrow(() -> new NullPointerException("Comment not found")));
     }
 
     /**
