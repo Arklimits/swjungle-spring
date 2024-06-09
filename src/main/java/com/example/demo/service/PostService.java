@@ -15,6 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final UserService userService;
 
     /** 전체 Post 로드
      *
@@ -32,7 +33,7 @@ public class PostService {
      */
     public PostResponseDTO addPost(PostRequestDTO postRequestDTO) {
         String date = java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Post post = new Post(postRequestDTO.getTitle(), postRequestDTO.getContent(), UserService.getCurrentUsername(), date);
+        Post post = new Post(postRequestDTO.getTitle(), postRequestDTO.getContent(), userService.getCurrentUsername(), date);
 
         return new PostResponseDTO(postRepository.save(post));
     }

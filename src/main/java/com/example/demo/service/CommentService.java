@@ -15,9 +15,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class CommentService {
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private CommentRepository commentRepository;
+    private final UserService userService;
+    private final CommentRepository commentRepository;
 
     /**
      * Comment 저장
@@ -31,7 +31,7 @@ public class CommentService {
         if (postRepository.findById(postId).isEmpty()) {
             throw new NullPointerException("Post does not exist");
         }
-        Comment comment = new Comment(commentRequestDTO.getContent(), UserService.getCurrentUsername(), date, postId);
+        Comment comment = new Comment(commentRequestDTO.getContent(), userService.getCurrentUsername(), date, postId);
 
         return new CommentResponseDTO(commentRepository.save(comment));
     }
