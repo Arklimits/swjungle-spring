@@ -13,5 +13,5 @@ spring:
       ddl-auto: update
 
 jwt:
-  expiration_time: 36000000
+  expiration_time: 1
   secret : DemoKeyHasToBeOver32ByteABCDEFGHIJKLMNOPQRSTUVWXYZ
