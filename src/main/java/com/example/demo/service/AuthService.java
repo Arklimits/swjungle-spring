@@ -13,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,16 +26,16 @@ public class AuthService {
     public UserInfoDTO login(UserRequestDTO userRequestDTO) {
         String username = userRequestDTO.getUsername();
         String password = userRequestDTO.getPassword();
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
 
-        if (user.isEmpty()) {
+        if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        if (!passwordEncoder.matches(password, user.get().getPassword())) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Password does not match");
         }
 
-        return modelMapper.map(user.get(), UserInfoDTO.class);
+        return modelMapper.map(user, UserInfoDTO.class);
     }
 }
