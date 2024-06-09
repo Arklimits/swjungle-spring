@@ -78,9 +78,6 @@ public class JwtUtil {
     public Boolean isTokenValid(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            System.out.println(getUsername(token));
-            System.out.println(getIssuedAt(token));
-            System.out.println(getExpiresAt(token));
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             System.out.println("Invalid JWT");
