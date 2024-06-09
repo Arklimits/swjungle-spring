@@ -4,12 +4,7 @@ import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.service.NullServiceException;
-import org.hibernate.validator.internal.constraintvalidators.bv.NullValidator;
-import org.springframework.beans.InvalidPropertyException;
-import org.springframework.beans.NullValueInNestedPathException;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InvalidObjectException;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,7 +26,11 @@ public class UserService implements UserDetailsService {
     @Bean
     public static String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof UserDetails userDetails)) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        if (!(authentication.getPrincipal() instanceof UserDetails userDetails)) {
             throw new UsernameNotFoundException("User not found");
         }
 
@@ -42,11 +40,19 @@ public class UserService implements UserDetailsService {
     @Bean
     public static String getCurrentUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return authentication.getAuthorities().toString();
-        } else {
-            throw new NullPointerException("User Role not found");
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
         }
+
+        if (!(authentication.getPrincipal() instanceof UserDetails userDetails)) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        if (userDetails.getAuthorities().isEmpty()) {
+            throw new NoSuchElementException("User Role not found");
+        }
+
+        return authentication.getAuthorities().toString();
     }
 
     public void saveUser(UserRequestDTO userRequestDTO) {
@@ -54,21 +60,23 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public Optional<User> findByUsername(String username) {
+    public User findByUsername(String username) {
 
         return userRepository.findByUsername(username);
     }
 
+//    public Boolean checkAuthority(String username) {
+//
+//    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty())
-            throw new UsernameNotFoundException("User not found");
+        User user = userRepository.findByUsername(username);
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.get().getUsername())
-                .password(user.get().getPassword())
-                .roles(user.get().getRole())
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRole())
                 .build();
     }
 }

@@ -4,14 +4,11 @@ import com.example.demo.controller.dto.PostListDTO;
 import com.example.demo.controller.dto.PostRequestDTO;
 import com.example.demo.controller.dto.PostResponseDTO;
 import com.example.demo.service.PostService;
-import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/post")
@@ -48,15 +45,11 @@ public class PostController {
     }
 
     @DeleteMapping("/del/{id}")
-    public ResponseEntity<?> removePost(@PathVariable("id") long id) {
+    public ResponseEntity<Long> removePost(@PathVariable("id") long id) {
         PostResponseDTO postResponseDTO = postService.getPostById(id);
-        if (Objects.requireNonNull(UserService.getCurrentUserRole()).equals("[ROLE_ADMIN]")
-                || Objects.requireNonNull(UserService.getCurrentUsername()).equals(postResponseDTO.post().getAuthor())) {
-            id = postService.deletePostById(id);
 
-            return new ResponseEntity<>(id, HttpStatus.OK);
-        }
+        id = postService.deletePostById(id);
 
-        return new ResponseEntity<>(postResponseDTO, HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 }

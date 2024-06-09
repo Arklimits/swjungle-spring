@@ -2,10 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.dto.UserRequestDTO;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
@@ -13,13 +14,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public String registerUser(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult bindingResult) {
-        if (userService.findByUsername(userRequestDTO.getUsername()).isPresent()) {
+    public String registerUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        if (userService.findByUsername(userRequestDTO.getUsername()) != null) {
             return "exist username";
-        }
-
-        if (bindingResult.hasErrors()) {
-            return bindingResult.getFieldError().getDefaultMessage();
         }
 
         userService.saveUser(userRequestDTO);
