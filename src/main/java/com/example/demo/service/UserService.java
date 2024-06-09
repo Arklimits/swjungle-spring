@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.component.UsernameFoundException;
+import com.example.demo.exception.UsernameFoundException;
 import com.example.demo.controller.dto.user.UserRequestDTO;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
