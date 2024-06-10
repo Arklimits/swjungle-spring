@@ -3,12 +3,14 @@ package com.example.demo.global.util;
 import com.example.demo.application.dto.auth.AuthResponse;
 import com.example.demo.application.dto.user.UserInfoDTO;
 import com.example.demo.application.service.UserService;
+import com.example.demo.component.handler.GlobalExceptionHandler;
 import com.example.demo.domain.exception.ExpiredJwtException;
 import com.example.demo.domain.exception.InvalidJwtException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +25,7 @@ public class JwtUtil {
 
     private final Key key;
     private final long accessTokenExpTime;
-    private final UserService userService;
+    private final GlobalExceptionHandler globalExceptionHandler;
 
     /**
      * Secret Key 및 Expiration Time 설정
@@ -39,7 +41,7 @@ public class JwtUtil {
 
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenExpTime = accessTokenExpTime;
-        this.userService = userService;
+        this.globalExceptionHandler = new GlobalExceptionHandler();
     }
 
     /**
@@ -82,10 +84,11 @@ public class JwtUtil {
      * @return Is Valid Token
      */
     public Boolean isTokenValid(String token) {
-        if(getUsername(token).isEmpty() || getExpiresAt(token) == null)
+        if (getUsername(token).isEmpty() || getExpiresAt(token) == null) {
             throw new InvalidJwtException();
+        }
 
-        if(getExpiresAt(token).before(new Date())){
+        if (getExpiresAt(token).before(new Date())) {
             throw new ExpiredJwtException();
         }
 

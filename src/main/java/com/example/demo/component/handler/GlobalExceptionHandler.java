@@ -1,8 +1,6 @@
 package com.example.demo.component.handler;
 
 import com.example.demo.domain.exception.ErrorCode;
-import io.jsonwebtoken.io.IOException;
-import jakarta.servlet.ServletException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -31,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handlerException(Exception e) {
+    public ResponseEntity<ErrorResponse> handlerException(Exception e) {
         if (exceptionMap.containsKey(e.getClass())) {
             ErrorCode errorCode = exceptionMap.get(e.getClass());
 
@@ -45,28 +43,6 @@ public class GlobalExceptionHandler {
         }
 
         // 예상 못한 에러
-        final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, e.getClass().getSimpleName())
-                .typeMessageCode("Error Message")
-                .titleMessageCode("Internal Server Error")
-                .detailMessageCode(e.getMessage())
-                .build();
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(IOException.class)
-    protected ResponseEntity<ErrorResponse> handlerIOException(IOException e) {
-        final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, e.getClass().getSimpleName())
-                .typeMessageCode("Error Message")
-                .titleMessageCode("Internal Server Error")
-                .detailMessageCode(e.getMessage())
-                .build();
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(ServletException.class)
-    protected ResponseEntity<ErrorResponse> handlerIOException(ServletException e) {
         final ErrorResponse errorResponse = ErrorResponse.builder(e, HttpStatus.INTERNAL_SERVER_ERROR, e.getClass().getSimpleName())
                 .typeMessageCode("Error Message")
                 .titleMessageCode("Internal Server Error")
